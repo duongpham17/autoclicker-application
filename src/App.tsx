@@ -8,6 +8,8 @@ import Pages from 'pages';
 import Navbar from 'layouts/navbar';
 import Mouse from 'layouts/mouse';
 
+console.log(process.env.NODE_ENV);
+
 export const App = () => (
   <Provider store={store}>
     <HashRouter>
