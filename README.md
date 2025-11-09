@@ -1,7 +1,7 @@
 Packaging the application
 
 ```
-npx electron-builder
+npm run dist
 ```
 
 Unsure about process.env.NODE_ENV, for now its set in environment folder as a variable
