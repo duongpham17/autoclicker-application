@@ -1,3 +1,14 @@
+export const permissions = [
+  {
+    event: "Mac users, mouse not working.",
+    text: `Go to "System settings" -> "privacy & security" -> "accessibility" -> add the application to the list. Restart application.`
+  },
+  {
+    event: "Mac users, mouse cant find location.",
+    text: `Go to "System settings" -> "privacy & security" -> "Screen & System Audio Recoding" -> add the application to the list. Restart Application.`
+  },
+];
+
 export const commands = [
   {
     event: "Seconds",

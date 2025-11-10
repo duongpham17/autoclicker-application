@@ -22,7 +22,6 @@
     "electron-devtools-installer": "^4.0.0",
     "electron-is-dev": "^3.0.1",
     "electron-updater": "^6.6.2",
-    "is-admin": "^4.0.0",
     "jsonwebtoken": "^9.0.2",
     "node-mac-permissions": "^2.5.0",
     "react": "^19.2.0",
@@ -33,7 +32,6 @@
     "react-scripts": "^5.0.1",
     "redux": "^5.0.1",
     "sass": "^1.93.2",
-    "sudo-prompt": "^9.2.1",
     "typescript": "^4.9.5",
     "wait-on": "^9.0.1"
   },
@@ -88,14 +86,6 @@
     "mac": {
       "icon": "mac/512x512.icns",
       "target": "dmg"
-    },
-    "win": {
-      "icon": "win/512x512.ico",
-      "target": "nsis"
-    },
-    "linux": {
-      "icon": "png/512x512.png",
-      "target": "AppImage"
     }
   }
 }

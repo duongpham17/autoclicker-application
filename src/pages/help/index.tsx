@@ -1,10 +1,18 @@
 import styles from './Help.module.scss';
-import {mouseEvents, inputFields, commands} from './data';
+import {mouseEvents, inputFields, commands, permissions} from './data';
 
 const Help = () => {
 
   return (
     <section className={styles.container}>
+
+      <h2>Permissions</h2>
+      {permissions.map(el => 
+        <div key={el.event} className={styles.element}>
+          <p>{el.event}</p>
+          <p>{el.text}</p>
+        </div>
+      )}
 
       <h2>Commands Layering</h2>
       {commands.map(el => 
