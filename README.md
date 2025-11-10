@@ -28,3 +28,10 @@ localhost:XXXX, ensure file path is correct. Revert back to issue 1. if needed.
 6. Package.json file may require a "homapage": "./", while your there check main is also correct, "public/electron.js"
 
 7. Made 2 files one for production and development in electron.js and swtich between the two less prone to bugs but more annoying.
+
+8. Releasing to GITHUB and the app starts having DAMAGE problems?
+    - xattr path/to/applciation.app
+    com.apple.provenance → macOS knows it came from the internet (Safari, Chrome, etc.).
+    com.apple.quarantine → Gatekeeper has locked it and won’t let it run because it’s
+    - xattr -cr path/to/applciation.app
+    to then remove and allow it to work again
