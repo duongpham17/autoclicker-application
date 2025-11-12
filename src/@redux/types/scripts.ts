@@ -25,8 +25,9 @@ export interface IScriptsCommands {
     y?: number,
     pixel_event?: string,
     pixel_color?: string,
-    pixel_x?: string,
-    pixel_y?: string,
+    pixel_x?: number,
+    pixel_y?: number,
+    pixel_wait?: number
 };
 
 export interface ResponseType {

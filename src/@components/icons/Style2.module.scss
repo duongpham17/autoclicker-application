@@ -1,0 +1,34 @@
+.container{
+    &:hover{
+        opacity: 0.8;
+    }
+    svg{
+        display: flex;
+        align-items: center;
+    }
+}
+
+.selected{
+    *{color: var(--primary) !important;}
+}
+.white{
+    *{color: white;}
+}
+.black{
+    *{color: black;}
+}
+.red{
+    *{color: var(--red)}
+}
+.green{
+    *{color: var(--green)}
+}
+.dark{
+    *{color: var(--dark)}
+}
+.light{
+    *{color: var(--light)}
+}
+.primary{
+    *{color: var(--primary)}
+}

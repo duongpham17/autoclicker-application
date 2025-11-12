@@ -1,0 +1,25 @@
+.container{
+    padding: 0.5rem;
+    border: 2px solid transparent;
+    margin: 0.5rem auto;
+}
+
+.black{
+    border-color: black;
+}
+
+.white{
+    border-color: white;
+}
+
+.primary{
+    border-color: var(--primary);
+}
+
+.dark{
+    border-color: var(--dark);
+}
+
+.light{
+    border-color: var(--light);
+}

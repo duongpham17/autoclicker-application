@@ -1,11 +1,26 @@
+export const scripts = [
+  {
+    title: "Credits",
+    text: "Each credit you purchase equals one script, and the script lasts indefinitely. You can edit it as many times as you like. If you delete the script, the credit will be refunded. This allows you to keep your UI clean and organized."
+  },
+  {
+    title: "How to delete script?",
+    text: `Create 2 commands and you will see a button saying "delete script", after deleting you will be given back 1 credit.`
+  }
+];
+
 export const permissions = [
   {
-    event: "Mac users, mouse not working.",
+    event: "Mac users, mouse not working",
     text: `Go to "System settings" -> "privacy & security" -> "accessibility" -> add the application to the list. Restart application.`
   },
   {
-    event: "Mac users, mouse cant find location.",
+    event: "Mac users, mouse cant find location",
     text: `Go to "System settings" -> "privacy & security" -> "Screen & System Audio Recoding" -> add the application to the list. Restart Application.`
+  },
+  {
+    event: "Windows users, if nothing is clicking or working",
+    text: `Ensure you run the application as admin.`
   },
 ];
 
@@ -45,7 +60,7 @@ export const mouseEvents = [
   },
   {
     event: "getPixelColor",
-    text: "Enter the x and y coordinates to read the screen color at that point. If the color matches, you can trigger additional mouse events."
+    text: "Enter the X and Y coordinates to read the color of the screen at that point. If the color matches, you can trigger additional mouse events. The WAIT input field lets you specify a number of seconds to wait for the pixel color to match. The script will check the color every second, looping until the specified time runs out."
   },
   {
     event: "keyTap",

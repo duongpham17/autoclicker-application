@@ -5,10 +5,9 @@ import Flex from '@components/flex/Style1';
 import { BsArrowLeft } from "react-icons/bs";
 
 import Informations from './informations';
+import Create from './create';
 import Commands from './commands';
-import Actions from './actions';
 import Edit from './edit';
-
 
 const Main = () => {
 
@@ -19,8 +18,8 @@ const Main = () => {
   return (
   <Fragment>
     <Informations script={script} />
+    <Create script={script} />
     <Commands script={script} />
-    <Actions script={script} />
     <Edit script={script} />
   </Fragment>
   )

@@ -4,10 +4,14 @@ import { useAppSelector } from '@redux/hooks/useRedux';
 import { script_selected } from '@localstorage';
 import Button from '@components/buttons/Style1';
 import Text from '@components/texts/Style1';
+import Hover from '@components/hover/Style1';
+import { MdAdd } from "react-icons/md";
 
 const Sidebar = () => {
 
   const {scripts, errors} = useAppSelector(state => state.scripts);
+
+  const {user} = useAppSelector(state => state.authentications)
 
   const {onCreateScript, loading, setScript, script} = useContext(Context);
 
@@ -20,13 +24,16 @@ const Sidebar = () => {
   return (
     <Fragment>
 
-      <Button 
-        label1="Create" 
-        onClick={onCreateScript} 
-        color="light" 
-        loading={loading} 
-        margin
-      />
+      <Hover message={user?.credit ? `Credits ${user?.credit}` : "No more credits"}>
+        <Button 
+          label1="Script"
+          label2={<MdAdd/>}
+          onClick={onCreateScript} 
+          color="light" 
+          loading={loading} 
+          margin
+        />
+      </Hover>
 
       {errors.create && <Text message={errors.create} color="red" />}
 
@@ -37,6 +44,7 @@ const Sidebar = () => {
             label1={!el.name ? `new` : el.name.substring(0,12)} 
             onClick={() => onSelect(el)} 
             selected={script?._id === el._id} 
+            color="dark"
             margin
           />
         )}

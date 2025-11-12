@@ -6,6 +6,7 @@ import Login from './login';
 import Home from './home';
 import Dashboard from './dashkboard';
 import Help from './help';
+import Profile from './profile';
 
 const Pages = () => {
   return (
@@ -15,6 +16,7 @@ const Pages = () => {
         <Route path="/login" element={<Login/>} />
         <Route path="/help" element={<Help/>} />
         <Route path="/dashboard" element={<Private component={Dashboard} roles={["admin","user"]}/> } />
+        <Route path="/Profile" element={<Private component={Profile} roles={["admin","user"]}/> } />
       </Routes>
     </div>
   )

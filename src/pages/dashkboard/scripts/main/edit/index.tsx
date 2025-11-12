@@ -1,4 +1,4 @@
-import { Fragment, useContext } from 'react';
+import { useContext } from 'react';
 import { Context } from '../../../Context';
 import { IScriptsApi, IScriptsCommands } from '@redux/types/scripts';
 import validation from './validation';
@@ -7,8 +7,8 @@ import Cover from '@components/covers/Style2';
 import Button from '@components/buttons/Style1';
 import Line from '@components/line/Style1';
 import Form from '@components/forms/Style1';
-
-import {Constant, MouseClick, MouseToggle, MoveMouse, KeyTap, KeyToggle, TypeString, GetPixelColor} from './Logic';
+import Container from '@components/containers/Style1';
+import {Constant, mouseEvents} from '../../cmds-mouse-create';
 
 const EditCommand = ({script, edit}: {script: IScriptsApi, edit: IScriptsCommands}) => {
 
@@ -43,76 +43,28 @@ const EditCommand = ({script, edit}: {script: IScriptsApi, edit: IScriptsCommand
     return (
         <Cover open={edit ? true : false} onClose={() => setEdit(null)}>
 
-            <Form onSubmit={onSubmit}>
-                <Button  
-                    label1="delete"
-                    color="dark"
-                    warning
-                    onClick={onDelete}
-                />
+            <Form onSubmit={onSubmit} width={700}>
+                <Button label1="Delete" color="dark" warning onClick={onDelete} />
+
                 <Line />
 
-                <Constant onChange={onChange} values={values} onSetValue={onSetValue} />
-    
-                { values.event === "mouseClick" &&
-                    <MouseClick onChange={onChange} values={values} onSetValue={onSetValue} />
-                }
-    
-                { values.event === "mouseToggle" &&
-                    <MouseToggle onChange={onChange} values={values} onSetValue={onSetValue} />
-                }
+                <Container>
+                    <Constant onChange={onChange} values={values} onSetValue={onSetValue} />
+                </Container>
                 
-                { (values.event === "moveMouse" || values.event === "moveMouseSmooth" || values.event === "dragMouse") &&
-                    <MoveMouse onChange={onChange} values={values} onSetValue={onSetValue} />
-                }
-    
-                { values.event === "keyTap" &&
-                    <KeyTap onChange={onChange} values={values} onSetValue={onSetValue} />
-                }
-    
-                { values.event === "keyToggle" &&
-                    <KeyToggle onChange={onChange} values={values} onSetValue={onSetValue} />
-                }
-    
-                { values.event === "typeString" &&
-                    <TypeString onChange={onChange} values={values} onSetValue={onSetValue} />
-                }
-    
-                { values.event === "getPixelColor" &&
-                    <Fragment>
-                        <GetPixelColor onChange={onChange} values={values} onSetValue={onSetValue} />
-    
-                        { values.pixel_event === "mouseClick" &&
-                            <MouseClick onChange={onChange} values={values} onSetValue={onSetValue} />
-                        }
-                        { values.pixel_event === "mouseToggle" &&
-                            <MouseToggle onChange={onChange} values={values} onSetValue={onSetValue} />
-                        }
-                        { (values.pixel_event === "moveMouse" || values.pixel_event === "moveMouseSmooth" || values.pixel_event === "dragMouse") &&
-                            <MoveMouse onChange={onChange} values={values} onSetValue={onSetValue} />
-                        }
-                        { values.pixel_event === "keyTap" &&
-                            <KeyTap onChange={onChange} values={values} onSetValue={onSetValue} />
-                        }
-                        { values.pixel_event === "keyToggle" &&
-                            <KeyToggle onChange={onChange} values={values} onSetValue={onSetValue} />
-                        }
-                        { values.pixel_event === "typeString" &&
-                            <TypeString onChange={onChange} values={values} onSetValue={onSetValue} />
-                        }
-                    </Fragment>
-                }
+                {values.event && (() => {
+                    const EventComponent = mouseEvents[values.event as keyof typeof mouseEvents];
+                    return EventComponent ? (<Container><EventComponent onChange={onChange} values={values} onSetValue={onSetValue} /></Container>  ) : null;
+                })()}
 
-                {edited && 
-                    <Button 
-                        label1="Update"
-                        color='primary'
-                        type="submit"
-                    />
-                }
+                {values.event === "getPixelColor" && values.pixel_event && (() => {
+                    const PixelComponent = mouseEvents[values.pixel_event as keyof typeof mouseEvents];
+                    return PixelComponent ? ( <Container><PixelComponent onChange={onChange} values={values} onSetValue={onSetValue} /></Container> ) : null;
+                })()}
 
-                <Line />
+                {edited && <Button label1="Update" color='primary' type="submit" /> }
             </Form>
+
         </Cover>
     );
 };

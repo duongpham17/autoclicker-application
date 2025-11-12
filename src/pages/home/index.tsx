@@ -3,7 +3,7 @@ import { useAppSelector } from '@redux/hooks/useRedux';
 import styles from './Home.module.scss';
 import { Link } from 'react-router-dom';
 
-const Home = () => {
+const HomePage = () => {
   const {user} = useAppSelector(state => state.authentications)
 
   return (
@@ -19,4 +19,4 @@ const Home = () => {
   )
 }
 
-export default Home
+export default HomePage

@@ -1,33 +1,17 @@
 import styles from './Terminal.module.scss';
-import { useContext, useState, useEffect, useCallback, useMemo, Fragment } from 'react';
+import { useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { Context } from '../Context';
-import { IScriptsCommands } from '@redux/types/scripts';
 import { generateid, secondsToMinutes } from '@utils';
+import { robotData, keyBy, TScriptsCommandsCustomised } from './cmds-mouse-actions';
+import { Constant, Seconds, mouseMessage } from './cmds-mouse-message';
+import { MdExitToApp } from 'react-icons/md';
 import Cover from '@components/covers/Style1';
 import Button from '@components/buttons/Style1';
 import Hover from '@components/hover/Style1';
 import Flex from '@components/flex/Style1';
 import FlexBetween from '@components/flex/Style2'
 import Range from '@components/ranges/Style1';
-import Colorblock from '@components/colorblock/Style1';
 import Progress from '@components/progress/Style1';
-import { MdKeyboardArrowRight, MdDone, MdOutlineClose, MdExitToApp } from 'react-icons/md';
-
-type TScriptsCommandsWithTime = IScriptsCommands & {
-  logTimestamp: number;
-  at_loop: number,
-  is_pixel_color: boolean,
-};
-
-function keyBy<T extends Record<K, PropertyKey>, K extends keyof T>(
-  arr: T[],
-  key: K
-): Record<T[K], T> {
-  return arr.reduce((acc, obj) => {
-    acc[obj[key]] = obj;
-    return acc;
-  }, {} as Record<T[K], T>);
-};
 
 const Terminal = () => {
 
@@ -35,105 +19,62 @@ const Terminal = () => {
   const [intervalId, setIntervalId] = useState<any>(null);
   const [seconds, setSeconds] = useState<number>(0);
   const [looped, setLooped] = useState<number>(1);
-  const [logs, setLogs] = useState<TScriptsCommandsWithTime[] | []>([]);
+  const [logs, setLogs] = useState<TScriptsCommandsCustomised[] | []>([]);
 
   const onStart = useCallback(() => {
     setLogs([]);
-    const robot = window.robot;
     if (!script || !script.commands.length) return;
-    const commands = keyBy(script.commands, "seconds");
-    const max_seconds = script.commands.slice(-1)[0].seconds;
 
+    const [commands, max_seconds] = [keyBy(script.commands, "seconds"), script.commands.slice(-1)[0].seconds];
     let timeoutId: ReturnType<typeof setTimeout>;
-    let [second_counter, loop_counter] = [seconds, 1];
-
-    if(second_counter > 0){
-      const mapLogs: any = script.commands.filter(el => el.seconds < seconds).map(el => ({...el, logTimestamp: Date.now(), pixel_color: false, at_loop: 1}));
-      setLogs(mapLogs);
-    };
+    let [second_counter, loop_counter, pixel_wait_counter, is_pixel_color] = [seconds, 1, 0, false];
 
     const reset = () => {
-      second_counter = 0; 
-      loop_counter++; 
-      setLooped((state) => state + 1); 
-      setLogs([]); 
+      loop_counter++;
+      second_counter = 0;
+      pixel_wait_counter = 0;
+      is_pixel_color = false;
+      setLooped((state) => state + 1);
+      setLogs([]);
     };
 
-    const update = (cmd: TScriptsCommandsWithTime) => {
-      setLogs(state => [cmd, ...state]);
+    const update = (cmd: TScriptsCommandsCustomised) => {
+      setLogs((state) => [cmd, ...state.filter(el => el.name !== cmd.name)]);
     };
-    
-    const handlers: Record<string, (cmd: IScriptsCommands) => void> = {
-      mouseClick: (cmd) => robot.mouseClick(cmd.click as string),
-      mouseToggle: (cmd) => robot.mouseToggle(cmd.toggle as string, cmd.click as string),
-      moveMouse: (cmd) => robot.moveMouse(cmd.x as number, cmd.y as number),
-      moveMouseSmooth: (cmd) => robot.moveMouseSmooth(cmd.x as number, cmd.y as number),
-      dragMouse: (cmd) => robot.dragMouse(cmd.x as number, cmd.y as number), 
-      keyTap: (cmd) => robot.keyTap(cmd.keyboard as string),
-      keyToggle: (cmd) => robot.keyToggle(cmd.toggle as string, cmd.keyboard as string),
-      typeString: (cmd) => robot.typeString(cmd.type as string),
-      restart: (cmd) => reset(),
-      getPixelColor: (cmd) => {
-        const isPixelColor = cmd.pixel_color === `#${robot.getPixelColor(Number(cmd.pixel_x), Number(cmd.pixel_y))}`;
-        const updatedCMD = { ...cmd, logTimestamp: Date.now(), at_loop: loop_counter, is_pixel_color: isPixelColor };
-        update(updatedCMD);
-        if(!isPixelColor) return;
-        if(cmd.pixel_event === "mouseClick"){
-          return robot.mouseClick(cmd.click as string);
-        };
-        if(cmd.pixel_event === "mouseToggle"){
-          return robot.mouseToggle(cmd.toggle as string, cmd.click as string);
-        };
-        if(cmd.pixel_event === "moveMouse"){
-          return robot.moveMouse(cmd.x as number, cmd.y as number);
-        };
-        if(cmd.pixel_event === "moveMouseSmooth" || cmd.pixel_event === "dragMouse"){
-          return robot.moveMouseSmooth(cmd.x as number, cmd.y as number);
-        };
-        if(cmd.pixel_event === "dragMouse"){
-          return robot.dragMouse(cmd.x as number, cmd.y as number);
-        };
-        if(cmd.pixel_event === "keyTap"){
-          return robot.keyTap(cmd.keyboard as string);
-        };
-        if(cmd.pixel_event === "keyToggle"){
-         return robot.keyToggle(cmd.toggle as string, cmd.keyboard as string);
-        };
-        if(cmd.pixel_event === "typeString"){
-          return robot.typeString(cmd.type as string);
-        };
-        if(cmd.pixel_event === "restart"){
-          return reset();
-        };
-      }
+
+    const wait = () => {
+      pixel_wait_counter += 1;
+      second_counter -= 1;
     };
+
+    const ctxOutside = { reset, update, wait };
 
     const loop = () => {
-      
       const isMaxLoops = loop_counter >= script.max_loop;
-      if (isMaxLoops) {
-        return clearTimeout(timeoutId);
-      };
+      if (isMaxLoops) return clearTimeout(timeoutId);
 
       second_counter = Math.round((second_counter + 0.1) * 100) / 100;
+      const isMaxSecondsForLoop = second_counter > max_seconds;
+      if (isMaxSecondsForLoop) reset();
 
-      const isLoopedFinish = second_counter > max_seconds;
-      if (isLoopedFinish) {
-        reset();
-      };
-
-      const cmd = commands[second_counter] as TScriptsCommandsWithTime;
-      if (cmd && typeof cmd.event === "string" && handlers[cmd.event]) {
-        // For getPixelColor commands, logging (with is_pixel_color) is handled inside handler
-        if (cmd.event === "getPixelColor") {
-          handlers[cmd.event](cmd);
-        } else {
-          const updatedCMD = { ...cmd, logTimestamp: Date.now(), at_loop: loop_counter };
-          if (cmd.delay_at_loop > 0 && loop_counter % cmd.delay_at_loop === 0) {
-            update(updatedCMD);
-          } else {
-            update(updatedCMD);
-            handlers[cmd.event](cmd);
+      const cmd = commands[second_counter] as TScriptsCommandsCustomised;
+      if (cmd?.event) {
+        const ctxInside = { pixel_wait_counter };
+        const entry = robotData[cmd.event];
+        switch(cmd.event){
+          case "getPixelColor": {
+            const is_pixel_color: any = entry.handler(cmd, ctxOutside, ctxInside);
+            update({...cmd, logTimestamp: Date.now(), at_loop: loop_counter, pixel_wait_counter, is_pixel_color });
+            break
+          };
+          case "restart":{
+            entry.handler(cmd, ctxOutside, ctxInside);;
+            break
+          }
+          default: {
+            entry.handler(cmd, ctxOutside, ctxInside);
+            update({...cmd, logTimestamp: Date.now(), at_loop: loop_counter, pixel_wait_counter, is_pixel_color });
+            break
           }
         }
       };
@@ -144,40 +85,44 @@ const Terminal = () => {
     };
 
     loop();
+  
   }, [script, seconds]);
 
   const onReset = useCallback(() => {
     clearInterval(intervalId);
     setIntervalId(null);
     setSeconds(0);
-    setLooped(0);
+    setLooped(1);
   }, [intervalId]);
 
   const onStop = useCallback((): void => {
     onReset();
   }, [onReset]);
 
-  const onExitTerminal = (): void => {
+  const onExitTerminal = useCallback((): void => {
     setIsTerminal(false);
     onStop();
-  };
-
+  }, [onStop, setIsTerminal]);
+  
   useEffect(() => {
-    function handleSpacebar(event: any) {
-      if (event.code === 'Space' || event.key === ' ' || event.key === 'Spacebar') {
-        if(intervalId) return onStop();
-        onStart();
-      }
+    const handleSpacebar = ({ code, key }: KeyboardEvent) => {
+      if (code !== 'Space' && key !== ' ' && key !== 'Spacebar') return;
+      intervalId ? onStop() : onStart();
     };
     window.addEventListener('keydown', handleSpacebar);
-    return () => {
-      window.removeEventListener('keydown', handleSpacebar);
-    };
+    return () => window.removeEventListener('keydown', handleSpacebar);
   }, [intervalId, onStop, onStart]);
 
-  const variables = useMemo(() => {
-    if(!script || !script.commands.length) return {max: 0, minutes: 9};
+  useEffect(() => {
+    const handleEsc = ({ code, key }: KeyboardEvent) => {
+      if (code === 'Escape' || key === 'Escape') onExitTerminal();
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, [onExitTerminal]);
 
+  const customData = useMemo(() => {
+    if(!script || !script.commands.length) return {max: 0, minutes: 9};
     return {
       max: script?.commands.slice(-1)[0].seconds,
       minutes: secondsToMinutes(script?.commands.slice(-1)[0].seconds * script.max_loop)
@@ -192,133 +137,54 @@ const Terminal = () => {
         <div className={styles.header}>
           <FlexBetween>
             <Hover message="Space bar">{!intervalId ? <button onClick={onStart}>Start</button> : <button onClick={onStop}>Stop</button>}</Hover>
-            <Hover message={`Looped / Max / ${variables.minutes}`}>{looped} / {script?.max_loop}</Hover>
-            <Hover message={`Seconds / Max`}>{seconds.toFixed(2)} / {variables.max.toFixed(2)}</Hover>
+            <Hover message={`Looped / Max / ${customData.minutes}`}>{looped} / {script?.max_loop}</Hover>
+            <Hover message={`Seconds / Max`}>{seconds.toFixed(2)} / {customData.max.toFixed(2)}</Hover>
           </FlexBetween>
 
           {script && logs.length < script.commands.length && (
-            intervalId ?
-            <div className={styles.progress}>
-              <Progress value={seconds} max={script.commands[logs.length].seconds} />
-              <FlexBetween>
-                <Hover message={"Next Command"}>
-                  {script.commands[logs.length].name.toUpperCase()} - {logs.length+1} / {script.commands.length}
-                </Hover>
-                <Hover message={"Seconds"}>
-                  {script.commands[logs.length].seconds}
-                </Hover>
-              </FlexBetween>
-            </div>
+            intervalId 
+            ?
+              <div className={styles.progress}>
+                <Progress value={seconds} max={script.commands[logs.length].seconds} />
+                <FlexBetween>
+                  <Hover message={"Next Command"}>
+                    {script.commands[logs.length].name.toUpperCase()} - {logs.length+1} / {script.commands.length}
+                  </Hover>
+                  <Hover message={"Seconds"}>
+                    {script.commands[logs.length].seconds}
+                  </Hover>
+                </FlexBetween>
+              </div>
             :
-            <Range type="range" min="0" step="0.1" max={variables.max} value={seconds} onChange={(e: any) => setSeconds(Number(e.target.value))} />
+              <Range type="range" min="0" step="0.1" max={customData.max} value={seconds} onChange={(e: any) => setSeconds(Number(e.target.value))} />
           )}
         </div>
 
         <div className={styles.logs}>
           {logs.map((el, index) => 
             <div key={generateid(2)} className={styles.element} style={{borderColor: el.color}}>
-              <FlexBetween>
-                <Flex>
-                  <Hover message={"Cmd / Total"}>[ {logs.length - index}, {script?.commands.length || 0} ]</Hover>
-                  <Hover message={"Name"}>{el.name.toUpperCase()}</Hover>
-                </Flex>
-                <Flex>
-                  {el.delay_at_loop > 0 && <Hover message={`Delayed at x loop`}> <Flex> {el.delay_at_loop} {el.at_loop % el.delay_at_loop === 0 ? <MdDone className={styles.doneIcon}/> : <MdOutlineClose className={styles.closeIcon}/>}</Flex></Hover> } 
-                  <Hover message={"Time"}>{new Date(el.logTimestamp).toISOString().substring(11, 19)}</Hover>
-                </Flex>
-              </FlexBetween>
+              <Constant cmd={el} index={index} ctx={{logs, script}}/>
+
               <Flex>
-                  <Hover message={"Seconds"}>{el.seconds}<small>s</small></Hover> <MdKeyboardArrowRight/>
-                  <Hover message={"Event"}>{el.event}</Hover> <MdKeyboardArrowRight/>
-                  {el.event === "mouseClick" &&
-                      <Fragment>
-                          <Hover message={"Click"}>{el.click}</Hover>
-                      </Fragment>
-                  }
-                  {el.event === "mouseToggle" &&
-                      <Fragment>
-                          <Hover message={"Toggle"}>{el.toggle}</Hover> <MdKeyboardArrowRight/>
-                          <Hover message={"Click"}>{el.click}</Hover>
-                      </Fragment>
-                  }
-                  {(el.event === "moveMouse" || el.event === "moveMouseSmooth" || el.event === "dragMouse") &&
-                      <Fragment>
-                          <Hover message={"Position"}>{`{ x: ${el.x}, y: ${el.y} }`}</Hover>
-                      </Fragment>
-                  }
-                  {el.event === "keyTap" &&
-                      <Fragment>
-                          <Hover message={"Keyboard"}>{el.keyboard}</Hover>
-                      </Fragment>
-                  }
-                  {el.event === "keyToggle" &&
-                      <Fragment>
-                          <Hover message={"Toggle"}>{el.toggle}</Hover> <MdKeyboardArrowRight/>
-                          <Hover message={"Keyboard"}>{el.keyboard}</Hover>
-                      </Fragment>
-                  }
-                  {el.event === "typeString" &&
-                      <Fragment>
-                          <Hover message={el.type || "sentence"}>{el.type?.slice(0, 9)}...</Hover>
-                      </Fragment>
-                  }
-                  {el.event === "restart" &&
-                      <Fragment>
-                          <Hover message={"Script will restart"}>END LOOP</Hover>
-                      </Fragment>
-                  }
-                  {el.event === "getPixelColor" &&
-                    <Fragment>
-                        <Hover message={el.pixel_color || ""}><Colorblock color={el.pixel_color}/></Hover><MdKeyboardArrowRight/>
-                        <Hover message={"Pixel X Y Color"}>{`{ x: ${el.pixel_x}, y: ${el.pixel_y} }`} </Hover> <MdKeyboardArrowRight/>
-                        <Hover message={"Did pixel x y color match?"}>{el.is_pixel_color ? <MdDone className={styles.doneIcon}/> : <MdOutlineClose className={styles.closeIcon}/>}</Hover> <MdKeyboardArrowRight/>
-                        <Hover message={"Pixel Event"}>{el.pixel_event}</Hover> <MdKeyboardArrowRight/>
-                        {el.pixel_event === "mouseClick" &&
-                            <Fragment>
-                                <Hover message={"Click"}>{el.click}s</Hover>
-                            </Fragment>
-                        }
-                        {el.pixel_event === "mouseToggle" &&
-                            <Fragment>
-                                <Hover message={"Toggle"}>{el.toggle}</Hover> <MdKeyboardArrowRight/>
-                                <Hover message={"Click"}>{el.click}</Hover>
-                            </Fragment>
-                        }
-                        {(el.pixel_event === "moveMouse" || el.pixel_event === "moveMouseSmooth" || el.pixel_event === "dragMouse") &&
-                            <Fragment>
-                                <Hover message={"Position"}>{`{ x: ${el.x}, y: ${el.y} }`}</Hover>
-                            </Fragment>
-                        }
-                        {el.pixel_event === "keyTap" &&
-                            <Fragment>
-                                <Hover message={"Keyboard"}>{el.keyboard}</Hover>
-                            </Fragment>
-                        }
-                        {el.pixel_event === "keyToggle" &&
-                            <Fragment>
-                                <Hover message={"Toggle"}>{el.toggle}</Hover> <MdKeyboardArrowRight/>
-                                <Hover message={"Keyboard"}>{el.keyboard}</Hover>
-                            </Fragment>
-                        }
-                        {el.pixel_event === "typeString" &&
-                            <Fragment>
-                                <Hover message={el.type || "sentence"}>{el.type?.slice(0, 9)}...</Hover>
-                            </Fragment>
-                        }
-                        {el.pixel_event === "restart" &&
-                            <Fragment>
-                                <Hover message={"Script will restart"}>END LOOP</Hover>
-                            </Fragment>
-                        }
-                    </Fragment>
-                  }
+                <Seconds cmd={el} index={index} ctx={{}} />
+
+                {el.event && (() => {
+                  const EventComponent = mouseMessage[el.event as keyof typeof mouseMessage];
+                  return EventComponent ? (<EventComponent  cmd={el} index={index} ctx={{}} /> ) : null;
+                })()}
+
+                {el.event === "getPixelColor" && el.pixel_event && (() => {
+                  const PixelComponent = mouseMessage[el.pixel_event as keyof typeof mouseMessage];
+                  return PixelComponent ? ( <PixelComponent  cmd={el} index={index} ctx={{}} /> ) : null;
+                })()}
+
               </Flex>
             </div>
           )}
         </div>
           
         <div className={styles.exitBtn}>
-          <Button onClick={onExitTerminal} label1={`EXIT [ ${script?.name} ]`} label2={<MdExitToApp/>} color="dark"/>
+          <Button onClick={onExitTerminal} label1={`Exit [ esc ] [ ${script?.name} ]`} label2={<MdExitToApp/>} color="dark"/>
         </div>
 
       </div>

@@ -3,7 +3,7 @@ import UseContextMain from './Context';
 import Scripts from './scripts';
 import Terminal from './terminal';
 
-const Dashboard = () => {
+const DashboardPage = () => {
   return (
     <UseContextMain>
       <Scripts />
@@ -12,4 +12,4 @@ const Dashboard = () => {
   )
 }
 
-export default Dashboard
+export default DashboardPage

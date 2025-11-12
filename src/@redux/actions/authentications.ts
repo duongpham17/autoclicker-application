@@ -96,7 +96,6 @@ const state_errors = (key:string, value: string) => async (dispatch: Dispatch<AC
     });
 };
 
-
 const state_clear = (key:AuthenticationsObjectKeys, value: any) => async (dispatch: Dispatch<ACTIONS>) => {
     dispatch({
         type: TYPES.AUTHENTICATIONS_RESPONSE_CLEAR,
