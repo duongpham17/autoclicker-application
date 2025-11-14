@@ -17,6 +17,12 @@ export function keyBy<T extends Record<K, PropertyKey>, K extends keyof T>(
   }, {} as Record<T[K], T>);
 };
 
+export const random_range = (value: number, range: number | undefined) => {
+  const min = value - (range || 0);
+  const max = value + (range || 0);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+};
+
 const robot = (window as any).robot;
 
 export const robotData: Record<
@@ -32,13 +38,13 @@ export const robotData: Record<
     handler: (cmd) => robot.mouseToggle(cmd.toggle as string, cmd.click as string),
   },
   moveMouse: {
-    handler: (cmd) => robot.moveMouse(cmd.x as number, cmd.y as number),
+    handler: (cmd) => robot.moveMouse(random_range(cmd.x as number, cmd.xyrange), random_range(cmd.x as number, cmd.xyrange as number)),
   },
   moveMouseSmooth: {
-    handler: (cmd) => robot.moveMouseSmooth(cmd.x as number, cmd.y as number),
+    handler: (cmd) => robot.moveMouseSmooth(random_range(cmd.x as number, cmd.xyrange), random_range(cmd.x as number, cmd.xyrange as number)),
   },
   dragMouse: {
-    handler: (cmd) => robot.dragMouse(cmd.x as number, cmd.y as number),
+    handler: (cmd) => robot.dragMouse(random_range(cmd.x as number, cmd.xyrange), random_range(cmd.x as number, cmd.xyrange as number)),
   },
   keyTap: {
     handler: (cmd) => robot.keyTap(cmd.keyboard as string),
@@ -51,7 +57,7 @@ export const robotData: Record<
   },
   moveMouseAndClick: {
     handler: (cmd) => {
-      robot.moveMouse(cmd.x as number, cmd.y as number);
+      robot.moveMouse(random_range(cmd.x as number, cmd.xyrange), random_range(cmd.x as number, cmd.xyrange as number));
       setTimeout(() => robot.mouseClick(cmd.click as string), 100);
     },
   },

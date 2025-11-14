@@ -1,14 +1,10 @@
 .container{
+    position: absolute;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.5rem 0.58rem;
-
-    .flex{
-        display: flex;
-        align-items: center;
-        position: relative;
-    }
+    padding: 0.5rem;
+    right: 0;
 
     button, a{
         display: block;
@@ -16,11 +12,11 @@
         padding: 0.5rem;
         background-color: var(--dark);
         margin: 0 0.1rem;
+        transition: ease-in-out 0.3s;
         svg{
             display: flex;
             font-size: 1.2rem;
         }
-
         &:hover{
             background-color: var(--primary);
             border-radius: 5px;

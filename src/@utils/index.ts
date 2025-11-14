@@ -1,4 +1,4 @@
-const randomid = (): string => {
+export const randomid = (): string => {
   const id = Math.random().toString(36).substring(7);
   return id;
 };
@@ -7,6 +7,10 @@ export const generateid = (times: number = 2): string => {
   const id = Array.from({length: times}, () => randomid()).join("");
   return id
 };
+
+export const capitalise = (str: string) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
 
 export const secondsToMinutes = (seconds: number): string => {
   const minutes = Math.floor(seconds / 60);

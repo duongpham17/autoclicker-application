@@ -10,7 +10,7 @@ interface Props extends React.DetailedHTMLProps<React.TextareaHTMLAttributes<HTM
     height?: number,
 };
 
-const Input = ({label1, label2, height, error, ...props}:Props) => {
+const Input = ({label1, label2, height=50, error, ...props}:Props) => {
     
   return (
     <div className={styles.container}>

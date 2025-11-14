@@ -1,6 +1,9 @@
-Packaging the application
+# Packaging the application
 
-Before releasing
+# Autoupdate
+package.json - publish - make sure the repo is pointing to the correct place
+
+# Before releasing
 1) change package.json version
 2) check public/electron.js is set to production
 3) npm run build
@@ -20,8 +23,7 @@ Issues
 
 4. Building using npx electron-builder seems to be a much better choice over npm.
 
-5. packaged & wont open, try npm run dev, if the app opens its listening on 
-localhost:XXXX, ensure file path is correct. Revert back to issue 1. if needed.
+5. packaged & wont open, try npm run dev, if the app open's its listening on localhost:XXXX, ensure file path is correct. Revert back to issue 1. if needed.
 
 6. Package.json file may require a "homepage": "./", while your there check main is also correct, "public/electron.js"
 

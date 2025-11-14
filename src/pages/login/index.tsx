@@ -27,7 +27,7 @@ const LoginPage = () => {
       navigate('/');
       window.location.reload();
       return;
-    }
+    };
   }, [user, navigate]);
 
   return (

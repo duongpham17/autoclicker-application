@@ -21,6 +21,7 @@ export interface IScriptsCommands {
     event?: string,
     click?: string,
     toggle?: string,
+    xyrange?: number,
     x?: number,
     y?: number,
     pixel_event?: string,

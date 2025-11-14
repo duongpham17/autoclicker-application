@@ -9,7 +9,7 @@ interface Types {
   open: boolean,
 };
 
-export const Cover = ({children, onClose, open}: Types) => {
+export const Style2 = ({children, onClose, open}: Types) => {
 
   useEffect(() => {
       if(open) document.body.classList.add("bodyScrollBar");
@@ -29,4 +29,4 @@ export const Cover = ({children, onClose, open}: Types) => {
   )
 }
 
-export default Cover
+export default Style2

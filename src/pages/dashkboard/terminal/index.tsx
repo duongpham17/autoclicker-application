@@ -4,7 +4,9 @@ import { Context } from '../Context';
 import { generateid, secondsToMinutes } from '@utils';
 import { robotData, keyBy, TScriptsCommandsCustomised } from './cmds-mouse-actions';
 import { Constant, Seconds, mouseMessage } from './cmds-mouse-message';
-import { MdExitToApp } from 'react-icons/md';
+import { MdExitToApp, MdKeyboardArrowRight } from 'react-icons/md';
+import Background from '@components/backgrounds/Style1';
+import Container from '@components/containers/Style1';
 import Cover from '@components/covers/Style1';
 import Button from '@components/buttons/Style1';
 import Hover from '@components/hover/Style1';
@@ -105,13 +107,14 @@ const Terminal = () => {
   }, [onStop, setIsTerminal]);
   
   useEffect(() => {
+    if(!isTerminal) return;
     const handleSpacebar = ({ code, key }: KeyboardEvent) => {
       if (code !== 'Space' && key !== ' ' && key !== 'Spacebar') return;
       intervalId ? onStop() : onStart();
     };
     window.addEventListener('keydown', handleSpacebar);
     return () => window.removeEventListener('keydown', handleSpacebar);
-  }, [intervalId, onStop, onStart]);
+  }, [intervalId, onStop, onStart, isTerminal]);
 
   useEffect(() => {
     const handleEsc = ({ code, key }: KeyboardEvent) => {
@@ -131,63 +134,66 @@ const Terminal = () => {
 
   return ( !isTerminal ? <div></div> :
     <Cover onClose={() => {}}>
-      
-      <div className={styles.container}>
+      <Background>
+        <div className={styles.container}>
 
-        <div className={styles.header}>
-          <FlexBetween>
-            <Hover message="Space bar">{!intervalId ? <button onClick={onStart}>Start</button> : <button onClick={onStop}>Stop</button>}</Hover>
-            <Hover message={`Looped / Max / ${customData.minutes}`}>{looped} / {script?.max_loop}</Hover>
-            <Hover message={`Seconds / Max`}>{seconds.toFixed(2)} / {customData.max.toFixed(2)}</Hover>
-          </FlexBetween>
+          <div className={styles.header}>
+            <FlexBetween>
+              <Hover message="Space bar">{!intervalId ? <button onClick={onStart}>Start</button> : <button onClick={onStop}>Stop</button>}</Hover>
+              <Hover message={`Looped / Max / ${customData.minutes}`}>{looped} / {script?.max_loop}</Hover>
+              <Hover message={`Seconds / Max`}>{seconds.toFixed(2)} / {customData.max.toFixed(2)}</Hover>
+            </FlexBetween>
 
-          {script && logs.length < script.commands.length && (
-            intervalId 
-            ?
-              <div className={styles.progress}>
-                <Progress value={seconds} max={script.commands[logs.length].seconds} />
-                <FlexBetween>
-                  <Hover message={"Next Command"}>
-                    {script.commands[logs.length].name.toUpperCase()} - {logs.length+1} / {script.commands.length}
-                  </Hover>
-                  <Hover message={"Seconds"}>
-                    {script.commands[logs.length].seconds}
-                  </Hover>
-                </FlexBetween>
-              </div>
-            :
-              <Range type="range" min="0" step="0.1" max={customData.max} value={seconds} onChange={(e: any) => setSeconds(Number(e.target.value))} />
-          )}
+            {script && logs.length < script.commands.length && (
+              intervalId 
+              ?
+                <div className={styles.progress}>
+                  <Progress value={seconds} max={script.commands[logs.length].seconds} />
+                  <FlexBetween>
+                    <Hover message={"Next Command"}>
+                    <Flex> {script.commands[logs.length].name.slice(0, 5).toUpperCase()} <MdKeyboardArrowRight/> {script.commands[logs.length].event} <MdKeyboardArrowRight/> {logs.length+1} / {script.commands.length}</Flex>
+                    </Hover>
+                    <Hover message={"Seconds"}>
+                      {script.commands[logs.length].seconds}
+                    </Hover>
+                  </FlexBetween>
+                </div>
+              :
+                <Range type="range" min="0" step="0.1" max={customData.max} value={seconds} onChange={(e: any) => setSeconds(Number(e.target.value))} />
+            )}
+          </div>
+
+          <div className={styles.logs}>
+            {logs.map((el, index) => 
+              <Container key={generateid(2)} color="dark">
+                <div className={styles.element} style={{borderColor: el.color}}>
+                  <Constant cmd={el} index={index} ctx={{logs, script}}/>
+
+                  <Flex>
+                    <Seconds cmd={el} index={index} ctx={{}} />
+
+                    {el.event && (() => {
+                      const EventComponent = mouseMessage[el.event as keyof typeof mouseMessage];
+                      return EventComponent ? (<EventComponent  cmd={el} index={index} ctx={{}} /> ) : null;
+                    })()}
+
+                    {el.event === "getPixelColor" && el.pixel_event && (() => {
+                      const PixelComponent = mouseMessage[el.pixel_event as keyof typeof mouseMessage];
+                      return PixelComponent ? ( <PixelComponent  cmd={el} index={index} ctx={{}} /> ) : null;
+                    })()}
+
+                  </Flex>
+                </div>
+              </Container>
+            )}
+          </div>
+            
+          <div className={styles.exitBtn}>
+            <Button onClick={onExitTerminal} label1={`Exit [ esc ] [ ${script?.name} ]`} label2={<MdExitToApp/>} color="dark"/>
+          </div>
+
         </div>
-
-        <div className={styles.logs}>
-          {logs.map((el, index) => 
-            <div key={generateid(2)} className={styles.element} style={{borderColor: el.color}}>
-              <Constant cmd={el} index={index} ctx={{logs, script}}/>
-
-              <Flex>
-                <Seconds cmd={el} index={index} ctx={{}} />
-
-                {el.event && (() => {
-                  const EventComponent = mouseMessage[el.event as keyof typeof mouseMessage];
-                  return EventComponent ? (<EventComponent  cmd={el} index={index} ctx={{}} /> ) : null;
-                })()}
-
-                {el.event === "getPixelColor" && el.pixel_event && (() => {
-                  const PixelComponent = mouseMessage[el.pixel_event as keyof typeof mouseMessage];
-                  return PixelComponent ? ( <PixelComponent  cmd={el} index={index} ctx={{}} /> ) : null;
-                })()}
-
-              </Flex>
-            </div>
-          )}
-        </div>
-          
-        <div className={styles.exitBtn}>
-          <Button onClick={onExitTerminal} label1={`Exit [ esc ] [ ${script?.name} ]`} label2={<MdExitToApp/>} color="dark"/>
-        </div>
-
-      </div>
+      </Background>
     </Cover>
   )
 }

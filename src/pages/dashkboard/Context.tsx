@@ -90,9 +90,7 @@ const UseContextMain = ({children}: {children: React.ReactNode}) => {
         if(!script) return;
         setLoading(true);
         await dispatch(Scripts.remove(script._id));
-        setIsEdited(false);
-        setScript(null);
-        setLoading(false);
+        window.location.reload()
     };
 
     const value = {

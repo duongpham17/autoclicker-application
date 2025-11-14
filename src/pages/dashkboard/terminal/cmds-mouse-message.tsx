@@ -4,6 +4,7 @@ import Flex from '@components/flex/Style1';
 import FlexBetween from '@components/flex/Style2'
 import Colorblock from '@components/colorblock/Style1';
 import Icon from '@components/icons/Style2';
+import Text from '@components/texts/Style1';
 import { MdKeyboardArrowRight, MdDone, MdOutlineClose } from 'react-icons/md';
 import { Fragment } from 'react/jsx-runtime';
 
@@ -12,6 +13,8 @@ interface Props {
     index: number,
     ctx: any
 };
+
+const font_size_seconds = 21;
 
 export const Constant = ({cmd, index, ctx}: Props) => {
     return (
@@ -31,7 +34,7 @@ export const Constant = ({cmd, index, ctx}: Props) => {
 export const Seconds = ({cmd}: Props) => {
     return (
         <Fragment>
-            <Hover message={"Seconds"}>{cmd.seconds}<small>s</small></Hover> <MdKeyboardArrowRight/>
+            <Hover message={"Seconds"}><Flex><Text message={cmd.seconds} size={font_size_seconds} /><small>s</small></Flex></Hover> <MdKeyboardArrowRight/>
             <Hover message={"Event"}>{cmd.event}</Hover> <MdKeyboardArrowRight/>
         </Fragment>
     )
@@ -57,6 +60,7 @@ const MouseToggle = ({cmd}: Props) => {
 const MoveMouseAndClick = ({cmd}: Props) => {
     return (
         <Fragment>
+            <Hover message={"Range"}><Flex><Text message={cmd.xyrange}/>&#916;</Flex></Hover> <MdKeyboardArrowRight/>
             <Hover message={"X, Y"}>{`( ${cmd.x}, ${cmd.y} )`}</Hover> <MdKeyboardArrowRight/>
             <Hover message={"Click"}>{cmd.click}</Hover>
         </Fragment>
@@ -66,6 +70,7 @@ const MoveMouseAndClick = ({cmd}: Props) => {
 const MoveMouse = ({cmd}: Props) => {
     return (
         <Fragment>
+            <Hover message={"Range"}><Flex><Text message={cmd.xyrange}/>&#916;</Flex></Hover> <MdKeyboardArrowRight/>
             <Hover message={"X, Y"}>{`( ${cmd.x}, ${cmd.y} )`}</Hover>
         </Fragment>
     )
@@ -74,6 +79,7 @@ const MoveMouse = ({cmd}: Props) => {
 const MoveMouseSmooth = ({cmd}: Props) => {
     return (
         <Fragment>
+            <Hover message={"Range"}><Flex><Text message={cmd.xyrange}/>&#916;</Flex></Hover> <MdKeyboardArrowRight/>
             <Hover message={"X, Y"}>{`( ${cmd.x}, ${cmd.y} )`}</Hover>
         </Fragment>
     )
@@ -82,6 +88,7 @@ const MoveMouseSmooth = ({cmd}: Props) => {
 const DragMouse = ({cmd}: Props) => {
     return (
         <Fragment>
+            <Hover message={"Range"}><Flex><Text message={cmd.xyrange}/>&#916;</Flex></Hover> <MdKeyboardArrowRight/>
             <Hover message={"X, Y"}>{`( ${cmd.x}, ${cmd.y} )`}</Hover>
         </Fragment>
     )
@@ -122,11 +129,11 @@ const Restart = ({cmd}: Props) => {
 
 const GetPixelColor = ({cmd}: Props) => {
     return (
-        <Fragment>
-            <Hover message={cmd.pixel_color || ""}><Colorblock color={cmd.pixel_color}/></Hover><MdKeyboardArrowRight/>
+        <Fragment> 
+            <Hover message={cmd.pixel_color || "No Pixel Color"}><Colorblock color={cmd.pixel_color}/></Hover><MdKeyboardArrowRight/>
             <Hover message={"Wait"}>{Number(cmd.pixel_wait) - Number(cmd.pixel_wait_counter)}s</Hover><MdKeyboardArrowRight/>
             <Hover message={"Pixel X Y color"}>{`( ${cmd.pixel_x}, ${cmd.pixel_y} )`} </Hover> <MdKeyboardArrowRight/>
-            <Hover message={"Did pixel x y color match?"}>{cmd.is_pixel_color ? <Icon color="green"><MdDone /></Icon> : <Icon color="red"><MdOutlineClose /></Icon>}</Hover> <MdKeyboardArrowRight/>
+            <Hover message={"Did pixel x y color match?"}><Flex>{cmd.is_pixel_color ? <Icon color="green"><MdDone /></Icon> : <Icon color="red"><MdOutlineClose /></Icon>}</Flex></Hover> <MdKeyboardArrowRight/>
             <Hover message={"Pixel Event"}>{cmd.pixel_event}</Hover> <MdKeyboardArrowRight/>
         </Fragment>
     )

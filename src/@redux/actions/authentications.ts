@@ -18,6 +18,12 @@ const login = (data: IAuthenticationsLogin) => async (dispatch: Dispatch<ACTIONS
             type: TYPES.AUTHENTICATIONS_RESPONSE_ERROR,
             payload: {login: error.response.data.message}
         });
+        setTimeout(() => {
+            dispatch({
+                type: TYPES.AUTHENTICATIONS_RESPONSE_ERROR,
+                payload: {}
+            });
+        }, 5000)
         console.log(error.response.data)
     }
 };
@@ -35,6 +41,12 @@ const signup = (data: IAuthenticationsSignup) => async (dispatch: Dispatch<ACTIO
             type: TYPES.AUTHENTICATIONS_RESPONSE_ERROR,
             payload: {signup: error.response.data.message}
         });
+        setTimeout(() => {
+            dispatch({
+                type: TYPES.AUTHENTICATIONS_RESPONSE_ERROR,
+                payload: {}
+            });
+        }, 5000)
         console.log(error.response)
     }
 };
@@ -68,6 +80,12 @@ const reset = (data: IAuthenticationsReset) => async (dispatch: Dispatch<ACTIONS
             type: TYPES.AUTHENTICATIONS_RESPONSE_ERROR,
             payload: {reset: error.response.data.message}
         });
+        setTimeout(() => {
+            dispatch({
+                type: TYPES.AUTHENTICATIONS_RESPONSE_ERROR,
+                payload: {}
+            });
+        }, 5000)
         console.log(error.response)
     }
 };
@@ -85,6 +103,12 @@ const forgot = (data: IAuthenticationsForgot) => async (dispatch: Dispatch<ACTIO
             type: TYPES.AUTHENTICATIONS_RESPONSE_ERROR,
             payload: {forgot: error.response.data.message}
         });
+        setTimeout(() => {
+            dispatch({
+                type: TYPES.AUTHENTICATIONS_RESPONSE_ERROR,
+                payload: {}
+            });
+        }, 5000)
         console.log(error.response)
     }
 };

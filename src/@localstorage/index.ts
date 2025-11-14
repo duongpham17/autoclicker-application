@@ -26,13 +26,19 @@ export const user_authentication = {
 };
 
 export const theme = {
-    name: `${unique_hostname}-theme`,
-    get: () => JSON.parse(localStorage.getItem(`${unique_hostname}-theme`) as any),
-    set: ({name, background}: {name: string, background: string}) => localStorage.setItem(`${unique_hostname}-theme`, JSON.stringify({name, background}))
+  name: `${unique_hostname}-theme`,
+  get: () => JSON.parse(localStorage.getItem(`${unique_hostname}-theme`) as any),
+  set: ({name, background}: {name: string, background: string}) => localStorage.setItem(`${unique_hostname}-theme`, JSON.stringify({name, background}))
 };
 
 export const script_selected = {
-    name: `${unique_hostname}-script-selected`,
-    get: () => localStorage.getItem(`${unique_hostname}-script-selected`) as any,
-    set: (id: string) => localStorage.setItem(`${unique_hostname}-script-selected`, id)
+  name: `${unique_hostname}-script-selected`,
+  get: () => localStorage.getItem(`${unique_hostname}-script-selected`) as any,
+  set: (id: string) => localStorage.setItem(`${unique_hostname}-script-selected`, id)
+};
+
+export const border_color = {
+  name: `${unique_hostname}-border-color`,
+  get: () => localStorage.getItem(`${unique_hostname}-border-color`),
+  set: (color: string) => localStorage.setItem(`${unique_hostname}-border-color`, color)
 };

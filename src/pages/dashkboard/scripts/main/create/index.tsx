@@ -2,6 +2,7 @@ import { useContext, useState } from 'react';
 import { Context } from '../../../Context';
 import { IScriptsApi, IScriptsCommands } from '@redux/types/scripts';
 import { generateid } from '@utils';
+import { border_color } from '@localstorage';
 import validation from './validation';
 import useForm from '@hooks/useForm';
 import Button from '@components/buttons/Style1';
@@ -19,12 +20,13 @@ const Commands = ({script}: {script: IScriptsApi}) => {
         name: generateid(1),
         seconds: 0,
         delay_at_loop: 0,
-        color: "#191919",
+        color: border_color.get() || "#191919",
         event: "mouseClick",
         click: "left",
         toggle: "down",
         keyboard: undefined,
         type: undefined,
+        xyrange: undefined,
         x: undefined,
         y: undefined,
         pixel_event: undefined,
@@ -41,13 +43,15 @@ const Commands = ({script}: {script: IScriptsApi}) => {
         const data = {...script};
         values.seconds = Number(values.seconds);
         values.delay_at_loop = Number(values.delay_at_loop);
-        ["toggle", "keyboard", "type", "x", "y", "pixel_event", "pixel_x", "pixel_y"].forEach((key) => {
+        ["toggle", "keyboard", "type", "x", "y", "xyrange", "pixel_event", "pixel_x", "pixel_y", "pixel_wait", "pixel_color", "pixel_wait"].forEach((key) => {
             if (!values[key as keyof IScriptsCommands]) delete values[key as keyof IScriptsCommands];
         });
         data.commands = [...data.commands, values];
         await onUpdateScript(data);
         onClear(initialState);
         setMaxCmd(false);
+        border_color.set(values.color);
+        onSetValue({color: values.color, seconds: values.seconds})
     };
 
     return (

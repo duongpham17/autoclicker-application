@@ -44,7 +44,6 @@ const Sidebar = () => {
             label1={!el.name ? `new` : el.name.substring(0,12)} 
             onClick={() => onSelect(el)} 
             selected={script?._id === el._id} 
-            color="dark"
             margin
           />
         )}

@@ -9,7 +9,6 @@ export interface IUsersApi {
     createdAt: number,
 };
 
-
 export interface ResponseType {
     [key: string]: any
 };

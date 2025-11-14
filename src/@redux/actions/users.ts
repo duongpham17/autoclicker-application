@@ -33,6 +33,10 @@ const password = (password: string) => async (dispatch: Dispatch<ACTIONS>) => {
                 payload: {}
             });
         }, 5000);
+        dispatch({
+            type: TYPES.USERS_RESPONSE_ERROR,
+            payload: {}
+        });
     } catch(error:any){
         console.log(error.response.data);
         dispatch({

@@ -6,6 +6,7 @@ import Input from '@components/inputs/Style1';
 import Button from '@components/buttons/Style1';
 import Form from '@components/forms/Style1';
 import Text from '@components/texts/Style1';
+import Container from '@components/containers/Style1';
 
 interface Validation {
   email?: string,
@@ -56,7 +57,7 @@ const Forgot = () => {
           onChange={onChange} 
         />
 
-        {errors.forgot && <><br/><Text message={errors.forgot} color='red'/><br/></>}
+        {errors.forgot && <Container color="red"><Text message={errors.forgot} color='red'/></Container>}
 
         <Button 
           type="submit" 

@@ -5,7 +5,6 @@ import validation from './validation';
 import useForm from '@hooks/useForm';
 import Cover from '@components/covers/Style2';
 import Button from '@components/buttons/Style1';
-import Line from '@components/line/Style1';
 import Form from '@components/forms/Style1';
 import Container from '@components/containers/Style1';
 import {Constant, mouseEvents} from '../../cmds-mouse-create';
@@ -44,9 +43,6 @@ const EditCommand = ({script, edit}: {script: IScriptsApi, edit: IScriptsCommand
         <Cover open={edit ? true : false} onClose={() => setEdit(null)}>
 
             <Form onSubmit={onSubmit} width={700}>
-                <Button label1="Delete" color="dark" warning onClick={onDelete} />
-
-                <Line />
 
                 <Container>
                     <Constant onChange={onChange} values={values} onSetValue={onSetValue} />
@@ -63,6 +59,10 @@ const EditCommand = ({script, edit}: {script: IScriptsApi, edit: IScriptsCommand
                 })()}
 
                 {edited && <Button label1="Update" color='primary' type="submit" /> }
+            </Form>
+
+            <Form>
+                <Button type="button" label1="Delete" color="dark" warning onClick={onDelete} />
             </Form>
 
         </Cover>

@@ -6,6 +6,7 @@ import Input from '@components/inputs/Style1';
 import Button from '@components/buttons/Style1';
 import Form from '@components/forms/Style1';
 import Text from '@components/texts/Style1';
+import Container from '@components/containers/Style1';
 
 interface Validation {
   email?: string,
@@ -88,7 +89,7 @@ const Signup = () => {
           onChange={onChange} 
         />
 
-        {errors.signup && <><br/><Text message={errors.signup} color='red'/><br/></>}
+        {errors.signup && <Container color="red"><Text message={errors.signup} color='red'/></Container>}
 
         <Button 
           type="submit" 

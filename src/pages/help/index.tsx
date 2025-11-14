@@ -1,63 +1,34 @@
 import styles from './Help.module.scss';
-import {mouseEvents, inputFields, commands, permissions, scripts} from './data';
-import Container from '@components/containers/Style1';
+import useOpen from '@hooks/useOpen';
+import {mouseEvents, inputFields, seconds, permissions, scripts} from './data';
+import Container1 from '@components/containers/Style1';
+import Button from '@components/animations/buttons/Style1';
+import Text from '@components/texts/Style2';
 
 const HelpPage = () => {
 
+  const {onOpenArray, array} = useOpen({})
+
+  const informations = [mouseEvents, inputFields, seconds, permissions, scripts];
+
   return (
-    <section className={styles.container}>
-
-      <Container>
-        <h2>Scripts & Credits</h2>
-        {scripts.map(el => 
-          <div key={el.title} className={styles.element}>
-            <p>{el.title}</p>
-            <p>{el.text}</p>
-          </div>
-        )}
-      </Container>
-
-      <Container>
-        <h2>Permissions</h2>
-        {permissions.map(el => 
-          <div key={el.event} className={styles.element}>
-            <p>{el.event}</p>
-            <p>{el.text}</p>
-          </div>
-        )}
-      </Container>
-
-      <Container>
-        <h2>Commands Layering</h2>
-        {commands.map(el => 
-          <div key={el.event} className={styles.element}>
-            <p>{el.event}</p>
-            <p>{el.text}</p>
-          </div>
-        )}
-      </Container>
-
-      <Container>
-        <h2>Mouse Events</h2>
-        {mouseEvents.map(el => 
-          <div key={el.event} className={styles.element}>
-            <p>{el.event}</p>
-            <p>{el.text}</p>
-          </div>
-        )}
-      </Container>
-
-      <Container>
-        <h2>Input Fields</h2>
-        {inputFields.map(el => 
-          <div key={el.field} className={styles.element}>
-            <p>{el.field}</p>
-            <p>{el.description}</p>
-          </div>
-        )}
-      </Container>
+    <div className={styles.container}>
       
-    </section>
+      {informations.map((el) =>
+        <section key={el.title}>
+          <h2>{el.title}</h2>
+          {el.data.map(el => 
+            <div key={el.sub}>
+              <Container1 color="dark">
+                <Button onClick={() => onOpenArray(el.sub)} open={array.includes(el.sub)}>{el.sub}</Button>
+                {array.includes(el.sub) && <Text message={el.text} color="light" />}
+              </Container1>
+            </div>
+          )}
+        </section>
+      )}
+    
+    </div>
   )
 }
 

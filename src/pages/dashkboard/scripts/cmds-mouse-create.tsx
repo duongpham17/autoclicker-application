@@ -6,6 +6,7 @@ import Options1 from '@components/options/Style1';
 import Options2 from '@components/options/Style2';
 import Flex from '@components/flex/Style1';
 import Input from '@components/inputs/Style1';
+import Textarea from '@components/textareas/Style1';
 import { MdContentPaste } from 'react-icons/md';
 
 interface Props {
@@ -28,7 +29,7 @@ export const Constant = ({values, onSetValue, onChange}:Props) => {
                 <Input  
                     label1="Name"
                     name="name"
-                    value={values.name}
+                    value={values.name || ""}
                     onChange={onChange}
                 />
                 <Options2 
@@ -42,7 +43,7 @@ export const Constant = ({values, onSetValue, onChange}:Props) => {
                     label1="Seconds"
                     type="number"
                     name="seconds"
-                    placeholder='Seconds'
+                    placeholder='Lowest 0.1'
                     value={values.seconds || ""}
                     onChange={onChange}
                     step="0.1"
@@ -105,6 +106,16 @@ export const MoveMouseAndClick = ({values, onChange, onSetValue}: Props) => {
         <Fragment>
             <Flex>
                 <Input  
+                    label1="Range"
+                    type="number"
+                    name="xyrange"
+                    placeholder="E.g 10"
+                    value={values.xyrange || ""}
+                    onChange={onChange}
+                    min={0}
+                    step="1"
+                />
+                <Input  
                     label1="X"
                     type="number"
                     name="x"
@@ -138,6 +149,16 @@ export const MoveMouse = ({values, onChange}: Props) => {
         <Fragment>
             <Flex>
                 <Input  
+                    label1="Range"
+                    type="number"
+                    name="xyrange"
+                    placeholder="E.g 10"
+                    value={values.xyrange || ""}
+                    onChange={onChange}
+                    min={0}
+                    step="1"
+                />
+                <Input  
                     label1="X"
                     type="number"
                     name="x"
@@ -165,6 +186,16 @@ export const MoveMouseSmooth = ({values, onChange}: Props) => {
         <Fragment>
             <Flex>
                 <Input  
+                    label1="Range"
+                    type="number"
+                    name="xyrange"
+                    placeholder="E.g 10"
+                    value={values.xyrange || ""}
+                    onChange={onChange}
+                    min={0}
+                    step="1"
+                />
+                <Input  
                     label1="X"
                     type="number"
                     name="x"
@@ -191,6 +222,16 @@ export const DragMouse = ({values, onChange}: Props) => {
     return (
         <Fragment>
             <Flex>
+                <Input  
+                    label1="Range"
+                    type="number"
+                    name="xyrange"
+                    placeholder="E.g 10"
+                    value={values.xyrange || ""}
+                    onChange={onChange}
+                    min={0}
+                    step="1"
+                />
                 <Input  
                     label1="X"
                     type="number"
@@ -250,7 +291,7 @@ export const KeyToggle = ({values, onChange, onSetValue}: Props) => {
 export const TypeString = ({values, onChange}: Props) => {
     return (
         <Fragment>
-            <Input  
+            <Textarea  
                 label1="Type your sentence"
                 name="type"
                 value={values.type || ""}
@@ -287,7 +328,7 @@ export const GetPixelColor = ({values, onChange, onSetValue}: Props) => {
                     type="number"
                     name="pixel_wait"
                     placeholder='Seconds'
-                    value={values.pixel_wait}
+                    value={values.pixel_wait || ""}
                     onChange={onChange}
                     min={0}
                     step="1"
